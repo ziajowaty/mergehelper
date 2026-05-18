@@ -1,0 +1,5 @@
+# Keep APKs/AABs out of git history; distribute via GitHub Releases assets only.
+*.apk
+*.aab
+*.keystore
+*.jks
