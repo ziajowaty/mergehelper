@@ -15,8 +15,7 @@ This app has **no Network permission**, your **data is safe**.
 
 MergeHelper needs **Accessibility** (for taps, swipes, and screenshots) and permission to **draw over other apps** (for the floating controls). Fraudsters abuse the same combination on real banking apps (fake screens + automation). Many banks run **device-risk checks**: if accessibility automation is enabled—especially from a **sideloaded** app (not from official Store)—they may stop working or block login.
 
-- The bank app does **not** scan this APK code of behavior. It sees that **accessibility automation is on** for a sideloaded app.
-- A **factory reset is usually not required.**
+- The bank app does **not** scan this APK code or behavior. It sees that **accessibility automation is on** for a sideloaded app.
 
 ### How to fix it
 
@@ -24,7 +23,7 @@ MergeHelper needs **Accessibility** (for taps, swipes, and screenshots) and perm
 
 1. Open **Settings → Accessibility**.
 2. Turn **off** **MergeHelper gestures**.
-3. Quit your bank app.
+3. Fully quit your bank app.
 4. Open the bank app again.
 
 **When you want to play again:**
@@ -63,3 +62,11 @@ MergeHelper does not send gameplay data off your device (no network permission i
 
 ### Discard overlay - done with merging? Just remove the overlay.
 <img width="320" height="561" alt="discard" src="https://github.com/user-attachments/assets/cb034eaf-424e-4580-aec9-05af53a550a4" />
+
+## For maintainers
+
+Each published release triggers the [**VirusTotal scan**](.github/workflows/virustotal.yml) workflow on `.apk` assets:
+
+- **Release description** — appended with VirusTotal analysis links (after scan completes).
+- **Assets** — `virustotal-report.txt` with per-APK report URLs.
+

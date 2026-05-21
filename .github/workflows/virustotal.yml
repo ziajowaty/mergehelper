@@ -1,0 +1,149 @@
+name: VirusTotal scan
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to scan (e.g. v0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+  GH_REPO: ${{ github.repository }}
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  virustotal:
+    runs-on: ubuntu-latest
+    env:
+      VT_API_KEY: ${{ secrets.VT_API_KEY }}
+    steps:
+      - name: Skip when VT_API_KEY is not configured
+        if: env.VT_API_KEY == ''
+        run: echo "VT_API_KEY secret not set; skipping VirusTotal scan."
+
+      - name: Download release APKs
+        if: env.VT_API_KEY != '' && github.event_name == 'workflow_dispatch'
+        run: |
+          mkdir -p apks
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.apk' --dir apks
+          if ! compgen -G "apks/*.apk" > /dev/null; then
+            echo "No .apk assets found on release $RELEASE_TAG"
+            exit 1
+          fi
+          ls -la apks/
+
+      - name: VirusTotal scan release APKs
+        if: env.VT_API_KEY != '' && github.event_name == 'release'
+        id: vt_release
+        uses: crazy-max/ghaction-virustotal@936d8c5c00afe97d3d9a1af26d017cfdf26800a2 # v5.0.0
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          update_release_body: true
+          request_rate: 4
+          github_token: ${{ github.token }}
+          files: |
+            .apk$
+
+      - name: VirusTotal scan release APKs (manual)
+        if: env.VT_API_KEY != '' && github.event_name == 'workflow_dispatch'
+        id: vt_manual
+        uses: crazy-max/ghaction-virustotal@936d8c5c00afe97d3d9a1af26d017cfdf26800a2 # v5.0.0
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          update_release_body: false
+          request_rate: 4
+          files: |
+            apks/*.apk
+
+      - name: Update release body (manual)
+        if: env.VT_API_KEY != '' && github.event_name == 'workflow_dispatch'
+        env:
+          ANALYSIS: ${{ steps.vt_manual.outputs.analysis }}
+        run: |
+          python3 <<'PY'
+          import json, os, subprocess
+
+          tag = os.environ["RELEASE_TAG"]
+          raw = os.environ.get("ANALYSIS", "").strip()
+          if not raw:
+              raise SystemExit("No analysis output from VirusTotal step")
+
+          release = json.loads(
+              subprocess.check_output(
+                  ["gh", "api", f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/tags/{tag}"],
+                  text=True,
+              )
+          )
+          body = release.get("body") or ""
+          links = []
+          for part in raw.split(","):
+              part = part.strip()
+              if "=" not in part:
+                  continue
+              name, url = part.split("=", 1)
+              links.append((name.strip(), url.strip()))
+
+          if not links:
+              raise SystemExit("Could not parse analysis links")
+
+          header = (
+              "\n\n🛡 [VirusTotal GitHub Action]"
+              "(https://github.com/crazy-max/ghaction-virustotal) analysis:"
+          )
+          if header.strip() not in body.replace("\r\n", "\n"):
+              body += header
+          for name, url in links:
+              line = f"\n  * [`{name}`]({url})"
+              if line not in body:
+                  body += line
+
+          payload_path = "release-body.json"
+          with open(payload_path, "w", encoding="utf-8") as f:
+              json.dump({"body": body}, f)
+          subprocess.check_call(
+              [
+                  "gh",
+                  "api",
+                  "--method",
+                  "PATCH",
+                  f"repos/{os.environ['GITHUB_REPOSITORY']}/releases/{release['id']}",
+                  "--input",
+                  payload_path,
+              ]
+          )
+          PY
+
+      - name: Write virustotal-report.txt
+        if: env.VT_API_KEY != ''
+        env:
+          ANALYSIS: ${{ steps.vt_release.outputs.analysis || steps.vt_manual.outputs.analysis }}
+        run: |
+          python3 <<'PY'
+          import os, datetime
+          tag = os.environ["RELEASE_TAG"]
+          raw = os.environ.get("ANALYSIS", "")
+          lines = [
+              f"MergeHelper release: {tag}",
+              f"Scanned (UTC): {datetime.datetime.now(datetime.UTC).isoformat()}",
+              "",
+          ]
+          for part in [p.strip() for p in raw.split(",") if p.strip()]:
+              if "=" not in part:
+                  continue
+              name, url = part.split("=", 1)
+              lines += [f"File: {name}", f"Report: {url}", ""]
+          open("virustotal-report.txt", "w").write("\n".join(lines))
+          PY
+
+      - name: Attach report to release
+        if: env.VT_API_KEY != ''
+        run: |
+          gh release upload "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            virustotal-report.txt --clobber
