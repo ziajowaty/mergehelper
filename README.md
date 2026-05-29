@@ -1,7 +1,6 @@
 # MergeHelper
 
 Android helper for merge-style games: MultiClick (saved tap point, repeated taps) and MultiMerge (intelligent image search over user defined area; detects duplicates, merges them).
-It was made for Merge Survival game UI specifically, but if your merge game has a grid board, the app will work!
 
 This repository contains **no application source code**. It exists only to publish installable builds via [GitHub Releases](https://github.com/ziajowaty/mergehelper/releases).
 
