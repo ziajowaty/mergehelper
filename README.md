@@ -1,9 +1,5 @@
 # MergeHelper
 
-<p align="center">
-  <img src="assets/icons/mergehelper-launcher.png" alt="MergeHelper app icon" width="128" height="128" />
-</p>
-
 Android helper for merge-style games: MultiClick (saved tap point, repeated taps) and MultiMerge (intelligent image search over user defined area; detects duplicates, merges them).
 
 This repository contains **no application source code**. It exists only to publish installable builds via [GitHub Releases](https://github.com/ziajowaty/mergehelper/releases).
