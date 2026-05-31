@@ -1,12 +1,16 @@
 # MergeHelper
 
+<p align="center">
+  <img src="assets/icons/mergehelper-launcher.png" alt="MergeHelper app icon" width="128" height="128" />
+</p>
+
 Android helper for merge-style games: MultiClick (saved tap point, repeated taps) and MultiMerge (intelligent image search over user defined area; detects duplicates, merges them).
 
 This repository contains **no application source code**. It exists only to publish installable builds via [GitHub Releases](https://github.com/ziajowaty/mergehelper/releases).
 
 **This app can cause banking, wallet, and payment apps to refuse login or flag your phone as “suspicious.”** That is a known side effect of how MergeHelper works—not a sign your account was hacked. Read [Banking apps and how to fix it](#banking-apps-and-how-to-fix-it) before you install if you use the same phone for banking.
 
-This app has **no Network permission**, your **data is safe**.
+This app has **no Network permission** (as of v0.3.1; before the permissions leaked from OpenCV library), your **data is safe**.
 
 ## Banking apps and how to fix it
 
