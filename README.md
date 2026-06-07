@@ -8,6 +8,10 @@ This repository contains **no application source code**. It exists only to publi
 
 This app has **no Network permission** (as of v0.3.1; before the permissions leaked from OpenCV library), your **data is safe**.
 
+## Discord
+Join me on Discord. Provide feedback, ask for features, report bugs!
+https://discord.gg/5A9pArd34
+
 ## Banking apps and how to fix it
 
 ### What happens
