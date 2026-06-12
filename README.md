@@ -47,24 +47,16 @@ MergeHelper does not send gameplay data off your device (no network permission i
 ## What the tool offers:
 
 ### MultiClick - set a point on the screen, tap multiple times.
-<img width="320" height="418" alt="multiclick gif" src="https://github.com/user-attachments/assets/bfb2b49d-94ea-4fa4-86c9-95cbbca402c3" />
-
 
 ### MultiMerge - smart merge assistant. Detects duplicate items and merges them. If it detects 4 level 1 items, it will merge them to one level 3 item.
 !! Important !! User must input correct row x columns.
 
-<img width="320" height="418" alt="multimerge gif" src="https://github.com/user-attachments/assets/9269a43a-3db4-4184-b3ed-980d6e35db5d" />
-
 
 ### Adjust - change the MultiClick position and MultiMerge params on the fly, without leaving your merge game.
-<img width="320" height="418" alt="adjust" src="https://github.com/user-attachments/assets/0b0a2746-12b7-413e-8972-8d58f69f6ce5" />
-
 
 ### Profiles - change MultiClick position and MultiMerge area with one button click. Up to 99 profiles supported.
-<img width="320" height="418" alt="profiles" src="https://github.com/user-attachments/assets/ff1100ab-eab7-4737-9d04-3e2896acd12f" />
 
 ### Discard overlay - done with merging? Just remove the overlay.
-<img width="320" height="561" alt="discard" src="https://github.com/user-attachments/assets/cb034eaf-424e-4580-aec9-05af53a550a4" />
 
 ## For maintainers
 
